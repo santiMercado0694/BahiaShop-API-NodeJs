@@ -15,7 +15,7 @@ const getCategoryById = async (req, res) => {
   
     if (!isNaN(idCategoria)) {
       const response = await database.query(
-        "SELECT * FROM products WHERE id = $1",
+        "SELECT * FROM categorias WHERE id = $1",
         [idCategoria]
       );
   
