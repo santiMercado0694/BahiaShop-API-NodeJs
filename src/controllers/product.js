@@ -10,7 +10,26 @@ const getProducts = async(req, res) => {
     }
 };
 
-const getProductsByName = async (req, res) => {
+const getProductById = async (req, res) => {
+  const  idProducto = req.params.id;
+
+  if (!isNaN(idProducto)) {
+    const response = await database.query(
+      "SELECT * FROM products WHERE id = $1",
+      [idProducto]
+    );
+
+    if (response.rows.length > 0) {
+        res.status(200).json(response.rows);
+    } else {
+        res.status(404).json({ error: "No se encontro producto" });
+      }
+  }   else {
+        res.status(400).json({error: 'Producto no encontrado bajo ese id'}); 
+      }
+};
+
+const getProductByName = async (req, res) => {
     const nombre = req.params.name;
     
     if(typeof nombre === 'string') {
@@ -19,9 +38,11 @@ const getProductsByName = async (req, res) => {
         if(response.rows.length > 0){
             res.status(200).json(response.rows);
         }else{
-            res.status(404).json({error: 'No se encontraron productos bajo ese nombre'});
+            res.status(404).json({error: 'No se encontro producto'});
         }
-    } 
+      } else {
+            res.status(400).json({error: 'Producto no encontrado bajo ese nombre'}); 
+        }
 };
 
 const getProductsByCategory = async (req, res) => {
@@ -43,6 +64,7 @@ const getProductsByCategory = async (req, res) => {
 
   module.exports = {
     getProducts,
-    getProductsByName,
+    getProductById,
+    getProductByName,
     getProductsByCategory
 };
