@@ -20,6 +20,6 @@ router.get('/products/category/:name', product.getProductsByCategory);
 
 router.get('/categories', category.getCategories);
 router.get('/categories/:id', category.getCategoryById);
-router.get('/categories/:name', category.getCategoryByName);
+router.get('/categories/nombre/:nombre', category.getCategoryByName);
 
 module.exports = router;

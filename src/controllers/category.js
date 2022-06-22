@@ -30,10 +30,10 @@ const getCategoryById = async (req, res) => {
   };
 
 const getCategoryByName = async (req, res) => {
-    const nombre = req.params.nombre;
+    const name = req.params.nombre;
     
-    if(typeof nombre === 'string') {
-        const response = await database.query('SELECT * FROM categorias WHERE nombre = $1', [nombre]);
+    if(typeof name === 'string') {
+        const response = await database.query('SELECT * FROM categorias WHERE nombre = $1', [name]);
 
         if(response.rows.length > 0){
             res.status(200).json(response.rows);
