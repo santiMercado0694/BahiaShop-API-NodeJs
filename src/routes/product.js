@@ -7,6 +7,6 @@ router.get('/products', getProducts);
 router.get('/products/:id', getProductById);
 router.get('/products/:name', getProductByName);
 router.get('/products/category/:name', getProductsByCategory);
-router.post('/products/add', addProductCart);
+router.post('/products', addProductCart);
 
 module.exports = router;
