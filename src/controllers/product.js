@@ -66,9 +66,9 @@ const getProductsByCategory = async (req, res) => {
 
     try{
         const {id, name, price, stock, quantity, image_path} = req.body;
-        const response = await db.query('INSERT INTO cart(id, name, price, stock, quantity, image_path) VALUES ($1,$2,$3,$4,$5,$6)',
+        const response = await db.query('INSERT INTO cart (id, name, price, stock, quantity, image_path) VALUES ($1,$2,$3,$4,$5,$6)',
         [id, name, price, stock, quantity, image_path]);
-        
+
         res.status(201).json({succes: 'true'});
     }catch(error){
         res.status(404).json({
