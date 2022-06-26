@@ -18,7 +18,7 @@ router.get('/products', product.getProducts);
 router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
-router.post('/products/add', product.addProductCart);
+router.post('/products', product.addProductCart);
 
 router.get('/cart', cart.getContentCart);
 router.post('/cart/update/:id', cart.updateProductQuantity);
