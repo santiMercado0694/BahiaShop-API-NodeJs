@@ -3,7 +3,7 @@ const router = Router();
 const bodyParser = require("body-parser");
 
 const product = require('./controllers/product.js');
-const product = require('./controllers/cart.js');
+const cart = require('./controllers/cart.js');
 const category = require('./controllers/category.js');
 
 router.use(bodyParser.json());
@@ -18,8 +18,12 @@ router.get('/products', product.getProducts);
 router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
+router.post('/products/add', product.addProductCart);
 
 router.get('/cart', cart.getContentCart);
+router.post('/cart/update/:id', cart.updateProductQuantity);
+router.delete('/cart/delete', cart.deleteContentCart);
+router.delete('/cart/delete/:id', cart.deleteProduct);
 
 router.get('/categories', category.getCategories);
 router.get('/categories/:id', category.getCategoryById);
