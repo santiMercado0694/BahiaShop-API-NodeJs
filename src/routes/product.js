@@ -109,7 +109,7 @@ router.get('/products/:name', getProductByName);
 
 /**
  * @swagger
- * /products/category/{id}:
+ * /products/category/{category_id}:
  *   get:
  *     description: Ruta para obtener un producto por categoria.
  *     tags: 
@@ -127,7 +127,7 @@ router.get('/products/:name', getProductByName);
  *       '404':
  *         description: No se encontraron productos bajo esa categoria.  
  */
-router.get('/products/category/:id', getProductsByCategory);
+router.get('/products/category/:category_id', getProductsByCategory);
 
 /**
  * @swagger
