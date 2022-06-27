@@ -22,7 +22,7 @@ const updateProductQuantity = async (req, res) => {
             }
         });
     }else{
-        res.status(404).json({error: 'No se encontró el ingrediente'});
+        res.status(404).json({error: 'No se encontró el producto'});
     }
 }
 
