@@ -7,7 +7,7 @@ const swaggerOptions = {
     swaggerDefinition:{
         info:{
             title: "API | BAHIA COMPUTACION",
-            description: "API",
+            description: "Documentacion de la API",
             contact: {
                 name: "santimercado"
             },

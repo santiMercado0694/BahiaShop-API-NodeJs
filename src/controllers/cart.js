@@ -18,9 +18,9 @@ const updateProductQuantity = async (req, res) => {
     if (check_product.rowCount > 0){
         await database.query('UPDATE cart SET quantity = $2 WHERE id = $1',[id, quantity],function(err, result, fields) {
             if (err) {
-                res.status(400).json({error: "Algo salió mal"});
+                res.status(400).json({error: "Error al modificar la cantidad deseada del producto"});
             }else{
-                res.status(200).json({message: 'Producto modificado satisfactoriamente'});
+                res.status(200).json({message: 'Cantidad del producto actualizado'});
             }
         });
     }else{
@@ -38,11 +38,11 @@ const deleteProduct = async(req, res) => {
                 if (err) {
                     res.status(400).json({error: 'Algo salió mal'});
                 }else{
-                    res.status(200).json({message: 'Producto eliminado satisfactoriamente'});
+                    res.status(200).json({message: 'Producto eliminado del carrito'});
                 }
             });
         } else{
-            res.status(404).json({error: 'No existe el producto'});
+            res.status(404).json({error: 'No existe el producto en el carrito'});
         }
     }else{
         res.status(400).json({error: 'Parámetro inválido'});
@@ -53,9 +53,9 @@ const deleteContentCart = async(req, res) => {
     const response = await database.query('DELETE FROM cart');
 
     if(response.rows.length > 0){
-        res.status(404).json({error: 'Error al querer eliminar'});
+        res.status(404).json({error: 'Error al querer vaciar el carrito'});
     }else{      
-        res.status(201).json({succes: 'Se borro el contenido del carrito'});
+        res.status(201).json({succes: 'Carrito vaciado exitosamente'});
     }
 };
 
