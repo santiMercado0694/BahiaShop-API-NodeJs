@@ -61,7 +61,7 @@ router.get('/cart', getContentCart);
  *     parameters:
  *       - in: body
  *         name: Product quantity
- *         description: Datos a modificar.
+ *         description: Dato a modificar.
  *         schema:
  *           type: object
  *           required: 
