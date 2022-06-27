@@ -46,9 +46,9 @@ const deleteContentCart = async(req, res) => {
     const response = await database.query('DELETE FROM cart');
 
     if(response.rows.length > 0){
-        res.status(200).json(response.rows);
-    }else{
         res.status(404).json({error: 'Error al querer eliminar'});
+    }else{      
+        res.status(200).json(response.rows);
     }
 };
 
