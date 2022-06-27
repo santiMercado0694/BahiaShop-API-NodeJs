@@ -14,17 +14,20 @@ router.get('/', (request, response) => {
     });
 });
 
+//Products Routes
 router.get('/products', product.getProducts);
 router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
 router.post('/products', product.addProductCart);
 
+//Cart Routes
 router.get('/cart', cart.getContentCart);
 router.put('/cart/update', cart.updateProductQuantity);
 router.delete('/cart/delete', cart.deleteContentCart);
 router.delete('/cart/delete/:id', cart.deleteProduct);
 
+//Category Routes
 router.get('/categories', category.getCategories);
 router.get('/categories/:id', category.getCategoryById);
 router.get('/categories/nombre/:nombre', category.getCategoryByName);
