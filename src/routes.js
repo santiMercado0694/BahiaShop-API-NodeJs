@@ -21,7 +21,7 @@ router.get('/products/category/:category_id', product.getProductsByCategory);
 router.post('/products', product.addProductCart);
 
 router.get('/cart', cart.getContentCart);
-router.post('/cart/update/:id', cart.updateProductQuantity);
+router.put('/cart/update/:id', cart.updateProductQuantity);
 router.delete('/cart/delete', cart.deleteContentCart);
 router.delete('/cart/delete/:id', cart.deleteProduct);
 
