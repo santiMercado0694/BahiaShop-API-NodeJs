@@ -11,36 +11,39 @@ const getContentCart = async(req, res) => {
 };
 
 const updateProductQuantity = async (req, res) => {
-    const id = req.params.id;
-    try{
-        const {quantity} = req.body;
-        if(!isNaN(id)){
-            const response = await db.query('UPDATE cart SET quantity = $1 WHERE id = $2',
-            [quantity, id]);
-            res.status(201).json({succes: 'true'});
-        }else{
-            res.status(400).json({error: 'invalid parameter'});
-        }
-    }catch(error){
-        res.status(404).json({
-            error: 'failed to update'});
+    const {id, quantity} = req.body
+    const check_product = await database.query('SELECT * FROM cart WHERE id = $1',[id]);
+    if (check_product.rowCount > 0){
+        await database.query('UPDATE cart SET quantity = $2 WHERE id = $1',[id, quantity],function(err, result, fields) {
+            if (err) {
+                res.status(400).json({error: "Algo salió mal"});
+            }else{
+                res.status(200).json({message: 'Producto modificado satisfactoriamente'});
+            }
+        });
+    }else{
+        res.status(404).json({error: 'No se encontró el ingrediente'});
     }
-};
+}
 
-const deleteProduct = async (req, res) => {
-    try{
-        const id = req.params.id; 
-        if(!isNaN(id)){
-            const response = await db.query('DELETE FROM cart WHERE id = $1', [id]);
-            res.status(201).json({succes: 'true'});
-        }else{
-            res.status(400).json({error: 'No se encontro producto con ese id'});
+const deleteProduct = async(req, res) => {
+    if(!isNaN(req.params.id)){
+        const check_product = await database.query('SELECT * FROM cart WHERE id = $1',[req.params.id]);
+        if (check_product.rowCount > 0){
+            await database.query('DELETE FROM cart WHERE id = $1',[req.params.id],function(err, result, fields) {
+                if (err) {
+                    res.status(400).json({error: 'Algo salió mal'});
+                }else{
+                    res.status(200).json({message: 'Producto eliminado satisfactoriamente'});
+                }
+            });
+        } else{
+            res.status(404).json({error: 'No existe el ingrediente'});
         }
-    }catch(error){
-        res.status(404).json({
-            error: 'Error al querer eliminar'});
+    }else{
+        res.status(400).json({error: 'Parámetro inválido'});
     }
-};
+}
 
 const deleteContentCart = async(req, res) => {
     const response = await database.query('DELETE FROM cart');
@@ -48,7 +51,7 @@ const deleteContentCart = async(req, res) => {
     if(response.rows.length > 0){
         res.status(404).json({error: 'Error al querer eliminar'});
     }else{      
-        res.status(200).json(response.rows);
+        res.status(201).json({succes: 'Se borro el contenido del carrito'});
     }
 };
 
