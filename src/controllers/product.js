@@ -63,9 +63,9 @@ const getProductsByCategory = async (req, res) => {
   };
 
 const addProductCart = async(req, res) => {
-  const {id, name, price, stock, quantity, image_path} = req.body
+  const {id, name, price, stock, quantity, image_path, rating} = req.body
   console.log(req.body)
-  await database.query('INSERT INTO cart (id, name, price, stock, quantity, image_path) VALUES ($1,$2,$3,$4,$5,$6)', [id, name, price, stock, quantity, image_path], function(err, result, fields) {
+  await database.query('INSERT INTO cart (id, name, price, stock, quantity, image_path, rating) VALUES ($1,$2,$3,$4,$5,$6,$7)', [id, name, price, stock, quantity, image_path, rating], function(err, result, fields) {
       if (err) {
           res.status(400).json({error: err.message});
       }else{
