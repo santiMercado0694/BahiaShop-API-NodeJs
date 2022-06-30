@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getContentCart, updateProductQuantity, deleteContentCart, deleteProduct } = require('../controllers/cart');
+const { getContentCart, getTotalProductsCart, updateProductQuantity, deleteContentCart, deleteProduct } = require('../controllers/cart');
 
 /**
  * @swagger
@@ -54,6 +54,8 @@ const { getContentCart, updateProductQuantity, deleteContentCart, deleteProduct 
  *         description: No se encontraron productos en el carrito
  */
 router.get('/cart', getContentCart);
+
+router.get('/cart/quantity', getTotalProductsCart);
 
 /**
  * @swagger
