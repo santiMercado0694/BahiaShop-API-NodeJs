@@ -10,16 +10,6 @@ const getContentCart = async(req, res) => {
     }
 };
 
-const getTotalProductsCart = async(req, res) => {
-    const response = await database.query('SELECT SUM(quantity) FROM cart');
-
-    if(response.rows.length > 0){
-        res.status(200).json(response.rows);
-    }else{
-        res.status(404).json({error: 'Error al obtener la suma de los productos'});
-    }
-};
-
 const updateProductQuantity = async (req, res) => {
 
     const {id, quantity} = req.body

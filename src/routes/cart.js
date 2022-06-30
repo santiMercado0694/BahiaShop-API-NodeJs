@@ -55,8 +55,6 @@ const { getContentCart, getTotalProductsCart, updateProductQuantity, deleteConte
  */
 router.get('/cart', getContentCart);
 
-router.get('/cart/quantity', getTotalProductsCart);
-
 /**
  * @swagger
  * /cart/update:
@@ -126,5 +124,6 @@ router.delete('/cart/delete', deleteContentCart);
  *         description: No existe el producto en el carrito.
  */
 router.delete('/cart/delete/:id', deleteProduct);
+
 
 module.exports = router;

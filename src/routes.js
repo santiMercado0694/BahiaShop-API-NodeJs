@@ -23,7 +23,6 @@ router.post('/products', product.addProductCart);
 
 //Cart Routes
 router.get('/cart', cart.getContentCart);
-router.get('/cart/quantity', cart.getTotalProductsCart);
 router.put('/cart/update', cart.updateProductQuantity);
 router.delete('/cart/delete', cart.deleteContentCart);
 router.delete('/cart/delete/:id', cart.deleteProduct);
