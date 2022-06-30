@@ -125,5 +125,6 @@ router.delete('/cart/delete', deleteContentCart);
  */
 router.delete('/cart/delete/:id', deleteProduct);
 
+router.get('/quantity', getTotalProductsCart);
 
 module.exports = router;
