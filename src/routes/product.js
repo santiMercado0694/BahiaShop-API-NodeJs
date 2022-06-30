@@ -33,6 +33,9 @@ const { getProducts, getProductById, getProductByName, getProductsByCategory, ad
  *       image_path:
  *         type: string
  *         description: "Ruta de la imagen del producto"
+ *       rating:
+ *         type: integer
+ *         description: "Rating del producto"
  *     example:
  *       id: "1"
  *       name: "MacBook Pro"
@@ -149,6 +152,7 @@ router.get('/products/category/:category_id', getProductsByCategory);
  *             - stock
  *             - quantity
  *             - image_path
+ *             - rating
  *           properties:
  *             id:
  *              type: string
@@ -162,6 +166,8 @@ router.get('/products/category/:category_id', getProductsByCategory);
  *              type: integer
  *             image_path:
  *              type: string
+ *             rating:
+ *              type: integer
  *     responses:
  *       '200':
  *         description: Producto añadido al carrito exitosamente.
