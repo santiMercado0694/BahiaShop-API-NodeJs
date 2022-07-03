@@ -74,10 +74,29 @@ const addProductCart = async(req, res) => {
   });
 }
 
+const updateProductStock = async (req, res) => {
+
+  const {id, stock} = req.body
+  const check_product = await database.query('SELECT * FROM products WHERE id = $1',[id]);
+
+  if (check_product.rowCount > 0){
+      await database.query('UPDATE products SET stock = $2 WHERE id = $1',[id, stock],function(err, result, fields) {
+          if (err) {
+              res.status(400).json({error: "Error al modificar el stock deseado del producto"});
+          }else{
+              res.status(200).json({message: 'Stock del producto actualizado'});
+          }
+      });
+  }else{
+      res.status(404).json({error: 'No se encontró el producto'});
+  }
+}
+
   module.exports = {
     getProducts,
     getProductById,
     getProductByName,
     getProductsByCategory,
-    addProductCart
+    addProductCart,
+    updateProductStock
 };

@@ -20,6 +20,8 @@ router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
 router.post('/products', product.addProductCart);
+router.put('/products/update', product.updateProductStock);
+
 
 //Cart Routes
 router.get('/cart', cart.getContentCart);

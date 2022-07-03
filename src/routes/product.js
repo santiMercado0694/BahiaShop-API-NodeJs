@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getProducts, getProductById, getProductByName, getProductsByCategory, addProductCart } = require('../controllers/product');
+const { getProducts, getProductById, getProductByName, getProductsByCategory, addProductCart, updateProductStock } = require('../controllers/product');
 
 /**
  * @swagger
@@ -176,5 +176,7 @@ router.get('/products/category/:category_id', getProductsByCategory);
  * 
  */
 router.post('/products', addProductCart);
+
+router.put('/products/update', updateProductStock);
 
 module.exports = router;
