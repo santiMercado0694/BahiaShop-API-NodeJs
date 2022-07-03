@@ -25,7 +25,6 @@ router.put('/products/update', product.updateProductStock);
 
 //Cart Routes
 router.get('/cart', cart.getContentCart);
-router.get('/quantity', cart.getTotalProductsCart);
 router.put('/cart/update', cart.updateProductQuantity);
 router.delete('/cart/delete', cart.deleteContentCart);
 router.delete('/cart/delete/:id', cart.deleteProduct);

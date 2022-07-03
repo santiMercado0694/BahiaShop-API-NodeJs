@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getContentCart, getTotalProductsCart, updateProductQuantity, deleteContentCart, deleteProduct } = require('../controllers/cart');
+const { getContentCart, updateProductQuantity, deleteContentCart, deleteProduct } = require('../controllers/cart');
 
 /**
  * @swagger
@@ -50,8 +50,6 @@ const { getContentCart, getTotalProductsCart, updateProductQuantity, deleteConte
  *     responses:
  *       '200':
  *         description: Consulta exitosa
- *       '404':
- *         description: No se encontraron productos en el carrito
  */
 router.get('/cart', getContentCart);
 
@@ -124,7 +122,5 @@ router.delete('/cart/delete', deleteContentCart);
  *         description: No existe el producto en el carrito.
  */
 router.delete('/cart/delete/:id', deleteProduct);
-
-router.get('/quantity', getTotalProductsCart);
 
 module.exports = router;

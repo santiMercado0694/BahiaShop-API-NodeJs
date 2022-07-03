@@ -177,6 +177,35 @@ router.get('/products/category/:category_id', getProductsByCategory);
  */
 router.post('/products', addProductCart);
 
+/**
+ * @swagger
+ * /products/update:
+ *   put:
+ *     description: Ruta para modificar el stock de un producto de la tienda.
+ *     tags: 
+ *       - Tienda
+ *     parameters:
+ *       - in: body
+ *         name: Product stock
+ *         description: Dato a modificar.
+ *         schema:
+ *           type: object
+ *           required: 
+ *             - id
+ *             - stock
+ *           properties:
+ *             id:
+ *               type: string
+ *             stock:
+ *               type: integer
+ *     responses:
+ *       '200':
+ *         description: Stock del producto actualizado.
+ *       '400':
+ *         description: Error al modificar el stock deseado del producto.
+ *       '404':
+ *         description: No se encontró el Producto.
+ */
 router.put('/products/update', updateProductStock);
 
 module.exports = router;
