@@ -95,7 +95,7 @@ const updateProductStock = async (req, res) => {
 const searchProduct = async(req, res) => {
   const param = req.params.param;
   const {name} = req.body
-  const response = await database.query('SELECT * FROM products WHERE name ILIKE  $1$2$1', [param, name]);
+  const response = await database.query('SELECT * FROM products WHERE name ILIKE  $1 $2 $1', [param, name]);
       res.status(200).json(response.rows);
   }
 
