@@ -35,6 +35,19 @@ const { getCategories, getCategoriesNames, getCategoryById, getCategoryByName } 
  */
 router.get('/categories', getCategories);
 
+/**
+ * @swagger
+ * /categories:
+ *   get:
+ *     description: Ruta para obtener todo los nombres de las categorias.
+ *     tags:
+ *       - Categorías
+ *     responses:
+ *       '200':
+ *         description: Consulta exitosa
+ *       '404':
+ *         description: No se encontraron categorias
+ */
 router.get('/categories/names', getCategoriesNames);
 
 /**
@@ -63,7 +76,7 @@ router.get('/categories/:id', getCategoryById);
 
 /**
  * @swagger
- * /categories/{name}:
+ * /categories/name/{nombre}:
  *   get:
  *     description: Ruta para obtener una categoría por nombre.
  *     tags: 
