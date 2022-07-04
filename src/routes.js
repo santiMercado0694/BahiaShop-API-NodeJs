@@ -16,7 +16,6 @@ router.get('/', (request, response) => {
 
 //Products Routes
 router.get('/products', product.getProducts);
-router.get('/products/search/:param', product.searchProduct);
 router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getProducts, searchProduct, getProductById, getProductByName, getProductsByCategory, addProductCart, updateProductStock } = require('../controllers/product');
+const { getProducts, getProductById, getProductByName, getProductsByCategory, addProductCart, updateProductStock } = require('../controllers/product');
 
 /**
  * @swagger
@@ -62,7 +62,6 @@ const { getProducts, searchProduct, getProductById, getProductByName, getProduct
  */
 router.get('/products', getProducts);
 
-router.get('/products/search/:param', searchProduct);
 
 /**
  * @swagger
