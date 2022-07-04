@@ -83,6 +83,6 @@ router.get('/categories/:id', getCategoryById);
  *       '404':
  *         description: No se encontro categoria.  
  */
-router.get('/categories/:name', getCategoryByName);
+router.get('/categories/name/:nombre', getCategoryByName);
 
 module.exports = router;

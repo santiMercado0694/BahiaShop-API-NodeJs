@@ -33,6 +33,6 @@ router.delete('/cart/delete/:id', cart.deleteProduct);
 router.get('/categories', category.getCategories);
 router.get('/categories/names', category.getCategoriesNames);
 router.get('/categories/:id', category.getCategoryById);
-router.get('/categories/:nombre', category.getCategoryByName);
+router.get('/categories/name/:nombre', category.getCategoryByName);
 
 module.exports = router;
