@@ -37,7 +37,7 @@ router.get('/categories', getCategories);
 
 /**
  * @swagger
- * /categories:
+ * /categories/names:
  *   get:
  *     description: Ruta para obtener todo los nombres de las categorias.
  *     tags:
