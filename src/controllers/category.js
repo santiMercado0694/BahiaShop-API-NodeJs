@@ -11,7 +11,7 @@ const getCategories = async(req, res) => {
 };
 
 const getCategoriesNames = async(req, res) => {
-    const response = await database.query('SELECT name FROM categorias');
+    const response = await database.query('SELECT nombre FROM categorias');
     if(response.rows.length > 0){
         res.status(200).json(response.rows);
     }else{
