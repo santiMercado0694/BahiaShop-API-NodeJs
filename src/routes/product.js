@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getProducts, getProductById, getProductByName, getProductsByCategory, addProductCart, updateProductStock } = require('../controllers/product');
+const { getProducts, searchProduct, getProductById, getProductByName, getProductsByCategory, addProductCart, updateProductStock } = require('../controllers/product');
 
 /**
  * @swagger
@@ -61,6 +61,8 @@ const { getProducts, getProductById, getProductByName, getProductsByCategory, ad
  *         description: No se encontraron productos en la tienda
  */
 router.get('/products', getProducts);
+
+router.get('/products/search', searchProduct);
 
 /**
  * @swagger

@@ -92,11 +92,18 @@ const updateProductStock = async (req, res) => {
   }
 }
 
+const searchProduct = async(req, res) => {
+  const {name} = req.body
+  const response = await database.query("SELECT * FROM products WHERE name ILIKE %name% ", [name]);
+      res.status(200).json(response.rows);
+  }
+
   module.exports = {
     getProducts,
     getProductById,
     getProductByName,
     getProductsByCategory,
     addProductCart,
-    updateProductStock
+    updateProductStock,
+    searchProduct
 };
