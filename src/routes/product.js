@@ -115,7 +115,7 @@ router.get('/products/:name', getProductByName);
  * @swagger
  * /products/category/{category_id}:
  *   get:
- *     description: Ruta para obtener un producto por categoria.
+ *     description: Ruta para obtener todos los productos de una categoria
  *     tags: 
  *       - Tienda
  *     parameters:
