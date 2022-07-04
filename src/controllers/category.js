@@ -10,6 +10,15 @@ const getCategories = async(req, res) => {
     }
 };
 
+const getCategoriesNames = async(req, res) => {
+    const response = await database.query('SELECT name FROM categorias');
+    if(response.rows.length > 0){
+        res.status(200).json(response.rows);
+    }else{
+        res.status(404).json({error: 'No se encontraron categorias'});
+    }
+};
+
 const getCategoryById = async (req, res) => {
     const  idCategoria = req.params.id;
   
@@ -48,5 +57,6 @@ const getCategoryByName = async (req, res) => {
 module.exports = {
     getCategories,
     getCategoryById,
-    getCategoryByName
+    getCategoryByName,
+    getCategoriesNames
 };

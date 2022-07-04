@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const { getCategories, getCategoryById, getCategoryByName } = require('../controllers/category');
+const { getCategories, getCategoriesNames, getCategoryById, getCategoryByName } = require('../controllers/category');
 
 /**
  * @swagger
@@ -34,6 +34,8 @@ const { getCategories, getCategoryById, getCategoryByName } = require('../contro
  *         description: No se encontraron categorias
  */
 router.get('/categories', getCategories);
+
+router.get('/categories/names', getCategoriesNames);
 
 /**
  * @swagger
