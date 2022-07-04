@@ -62,7 +62,7 @@ const { getProducts, searchProduct, getProductById, getProductByName, getProduct
  */
 router.get('/products', getProducts);
 
-
+router.get('/products/search/:param', searchProduct);
 
 /**
  * @swagger
@@ -178,8 +178,6 @@ router.get('/products/category/:category_id', getProductsByCategory);
  * 
  */
 router.post('/products', addProductCart);
-
-router.post('/products/search/:param', searchProduct);
 
 /**
  * @swagger
