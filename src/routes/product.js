@@ -62,7 +62,7 @@ const { getProducts, searchProduct, getProductById, getProductByName, getProduct
  */
 router.get('/products', getProducts);
 
-router.get('/products/search', searchProduct);
+router.get('/products/search/:param', searchProduct);
 
 /**
  * @swagger
