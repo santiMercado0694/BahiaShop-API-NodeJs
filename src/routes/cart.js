@@ -27,6 +27,9 @@ const { getContentCart, updateProductQuantity, deleteContentCart, deleteProduct 
  *       image_path:
  *         type: string
  *         description: "Ruta de la imagen del producto"
+ *       rating:
+ *         type: integer
+ *         description: "Rating del producto"
  *     example:
  *       id: "1"
  *       name: "MacBook Pro"
@@ -34,6 +37,7 @@ const { getContentCart, updateProductQuantity, deleteContentCart, deleteProduct 
  *       stock: 4
  *       quantity: 2
  *       image_path: "MacBook.png"
+ *       rating: 4
  */
 
 /**
@@ -46,8 +50,6 @@ const { getContentCart, updateProductQuantity, deleteContentCart, deleteProduct 
  *     responses:
  *       '200':
  *         description: Consulta exitosa
- *       '404':
- *         description: No se encontraron productos en el carrito
  */
 router.get('/cart', getContentCart);
 
@@ -61,7 +63,7 @@ router.get('/cart', getContentCart);
  *     parameters:
  *       - in: body
  *         name: Product quantity
- *         description: Datos a modificar.
+ *         description: Dato a modificar.
  *         schema:
  *           type: object
  *           required: 

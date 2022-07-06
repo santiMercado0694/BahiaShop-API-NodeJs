@@ -20,6 +20,8 @@ router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
 router.post('/products', product.addProductCart);
+router.put('/products/update', product.updateProductStock);
+
 
 //Cart Routes
 router.get('/cart', cart.getContentCart);
@@ -29,7 +31,8 @@ router.delete('/cart/delete/:id', cart.deleteProduct);
 
 //Category Routes
 router.get('/categories', category.getCategories);
+router.get('/categories/names', category.getCategoriesNames);
 router.get('/categories/:id', category.getCategoryById);
-router.get('/categories/nombre/:nombre', category.getCategoryByName);
+router.get('/categories/name/:nombre', category.getCategoryByName);
 
 module.exports = router;
