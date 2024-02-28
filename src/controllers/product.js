@@ -1,98 +1,114 @@
 const database = require('../database');
 
-const getProducts = async(req, res) => {
-    const response = await database.query('SELECT * FROM products');
+const getProducts = async (req, res) => {
+    try {
+        const [rows] = await database.execute('SELECT * FROM products');
 
-    if(response.rows.length > 0){
-        res.status(200).json(response.rows);
-    }else{
-        res.status(404).json({error: 'No se encontraron productos'});
+        if (rows.length > 0) {
+            res.status(200).json(rows);
+        } else {
+            res.status(404).json({ error: 'No se encontraron productos' });
+        }
+    } catch (error) {
+        console.error('Error al obtener productos:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
 const getProductById = async (req, res) => {
-  const  idProducto = req.params.id;
+    const idProducto = req.params.id;
 
-  if (!isNaN(idProducto)) {
-    const response = await database.query(
-      "SELECT * FROM products WHERE id = $1",
-      [idProducto]
-    );
+    if (!isNaN(idProducto)) {
+        try {
+            const [rows] = await database.execute('SELECT * FROM products WHERE id = ?', [idProducto]);
 
-    if (response.rows.length > 0) {
-        res.status(200).json(response.rows);
+            if (rows.length > 0) {
+                res.status(200).json(rows);
+            } else {
+                res.status(404).json({ error: 'No se encontro producto' });
+            }
+        } catch (error) {
+            console.error('Error al obtener producto por ID:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
     } else {
-        res.status(404).json({ error: "No se encontro producto" });
-      }
-  }   else {
-        res.status(400).json({error: 'Producto no encontrado bajo ese id'}); 
-      }
+        res.status(400).json({ error: 'Producto no encontrado bajo ese ID' });
+    }
 };
 
 const getProductByName = async (req, res) => {
     const nombre = req.params.name;
-    
-    if(typeof nombre === 'string') {
-        const response = await database.query('SELECT * FROM products WHERE name = $1', [nombre]);
 
-        if(response.rows.length > 0){
-            res.status(200).json(response.rows);
-        }else{
-            res.status(404).json({error: 'No se encontro producto'});
+    if (typeof nombre === 'string') {
+        try {
+            const [rows] = await database.execute('SELECT * FROM products WHERE name = ?', [nombre]);
+
+            if (rows.length > 0) {
+                res.status(200).json(rows);
+            } else {
+                res.status(404).json({ error: 'No se encontro producto' });
+            }
+        } catch (error) {
+            console.error('Error al obtener producto por nombre:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
         }
-      } else {
-            res.status(400).json({error: 'Producto no encontrado bajo ese nombre'}); 
-        }
+    } else {
+        res.status(400).json({ error: 'Producto no encontrado bajo ese nombre' });
+    }
 };
 
 const getProductsByCategory = async (req, res) => {
-    const  categoria = req.params.category_id;
-  
-    if (!isNaN(categoria)) {
-      const response = await database.query(
-        "SELECT * FROM products WHERE category_id = $1",
-        [categoria]
-      );
-  
-      if (response.rows.length > 0) {
-        res.status(200).json(response.rows);
-      } else {
-        res.status(404).json({ error: "No se encontraron productos bajo esa categoria" });
-      }
-    }
-  };
+    const categoria = req.params.category_id;
 
-const addProductCart = async(req, res) => {
-  const {id, name, price, stock, quantity, image_path, rating} = req.body
-  console.log(req.body)
-  await database.query('INSERT INTO cart (id, name, price, stock, quantity, image_path, rating) VALUES ($1,$2,$3,$4,$5,$6,$7)', [id, name, price, stock, quantity, image_path, rating], function(err, result, fields) {
-      if (err) {
-          res.status(400).json({error: err.message});
-      }else{
-          res.status(200).json({message: 'Producto añadido al carrito exitosamente'});
-      }
-  });
-}
+    if (!isNaN(categoria)) {
+        try {
+            const [rows] = await database.execute('SELECT * FROM products WHERE category_id = ?', [categoria]);
+
+            if (rows.length > 0) {
+                res.status(200).json(rows);
+            } else {
+                res.status(404).json({ error: 'No se encontraron productos bajo esa categoría' });
+            }
+        } catch (error) {
+            console.error('Error al obtener productos por categoría:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    } else {
+        res.status(400).json({ error: 'Categoría no válida' });
+    }
+};
+
+const addProductCart = async (req, res) => {
+    const { id, name, price, stock, quantity, image_path, rating } = req.body;
+
+    try {
+        await database.execute('INSERT INTO cart (id, name, price, stock, quantity, image_path, rating) VALUES (?, ?, ?, ?, ?, ?, ?)', [id, name, price, stock, quantity, image_path, rating]);
+        res.status(200).json({ message: 'Producto añadido al carrito exitosamente' });
+    } catch (error) {
+        console.error('Error al añadir producto al carrito:', error.message);
+        res.status(400).json({ error: 'Error al añadir producto al carrito' });
+    }
+};
 
 const updateProductStock = async (req, res) => {
+    const { id, stock } = req.body;
 
-  const {id, stock} = req.body
-  const check_product = await database.query('SELECT * FROM products WHERE id = $1',[id]);
+    try {
+        const [check_product] = await database.execute('SELECT * FROM products WHERE id = ?', [id]);
 
-  if (check_product.rowCount > 0){
-      await database.query('UPDATE products SET stock = $2 WHERE id = $1',[id, stock],function(err, result, fields) {
-          if (err) {
-              res.status(400).json({error: "Error al modificar el stock deseado del producto"});
-          }else{
-              res.status(200).json({message: 'Stock del producto actualizado'});
-          }
-      });
-  }else{
-      res.status(404).json({error: 'No se encontró el producto'});
-  }
-}
+        if (check_product.length > 0) {
+            await database.execute('UPDATE products SET stock = ? WHERE id = ?', [stock, id]);
+            res.status(200).json({ message: 'Stock del producto actualizado' });
+        } else {
+            res.status(404).json({ error: 'No se encontró el producto' });
+        }
+    } catch (error) {
+        console.error('Error al actualizar el stock del producto:', error.message);
+        res.status(400).json({ error: 'Error al actualizar el stock del producto' });
+    }
+};
 
-  module.exports = {
+module.exports = {
     getProducts,
     getProductById,
     getProductByName,

@@ -1,6 +1,7 @@
 require('dotenv').config({ path: "src/.env" })
 const swagger = require('../swagger');
 const cors = require('cors');
+const compression = require('compression');
 
 const express = require('express'),
       bodyParser = require('body-parser'),
@@ -9,6 +10,7 @@ const express = require('express'),
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
+app.use(compression());
 
 //Swagger
 app.use(
