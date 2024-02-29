@@ -1,5 +1,5 @@
 require('dotenv').config({ path: "src/.env" })
-const swagger = require('../swagger');
+const swagger = require('./swagger.js');
 const cors = require('cors');
 const compression = require('compression');
 
@@ -20,7 +20,7 @@ app.use(
   );
 
 //Routes
-app.use(require('./routes.js'))
+app.use(require('./src/routes.js'))
 
 const PORT = process.env.PORT || 3306;
 
