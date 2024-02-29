@@ -10,7 +10,7 @@ const express = require('express'),
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(bodyParser.json());
 app.use(cors());
-app.use(compression());
+//app.use(compression());
 
 //Swagger
 app.use(
