@@ -1,8 +1,8 @@
-const database = require('../database');
+const pool = require('../database');
 
 const getContentCart = async (req, res) => {
     try {
-        const [rows] = await database.execute('SELECT * FROM cart');
+        const { rows } = await pool.query('SELECT * FROM cart');
         res.status(200).json(rows);
     } catch (error) {
         console.error('Error al obtener contenido del carrito:', error.message);
@@ -14,10 +14,10 @@ const updateProductQuantity = async (req, res) => {
     const { id, quantity } = req.body;
 
     try {
-        const [check_product] = await database.execute('SELECT * FROM cart WHERE id = ?', [id]);
+        const { rows } = await pool.query('SELECT * FROM cart WHERE id = $1', [id]);
 
-        if (check_product.length > 0) {
-            await database.execute('UPDATE cart SET quantity = ? WHERE id = ?', [quantity, id]);
+        if (rows.length > 0) {
+            await pool.query('UPDATE cart SET quantity = $1 WHERE id = $2', [quantity, id]);
             res.status(200).json({ message: 'Cantidad del producto actualizado' });
         } else {
             res.status(404).json({ error: 'No se encontró el producto' });
@@ -31,10 +31,10 @@ const updateProductQuantity = async (req, res) => {
 const deleteProduct = async (req, res) => {
     if (!isNaN(req.params.id)) {
         try {
-            const [check_product] = await database.execute('SELECT * FROM cart WHERE id = ?', [req.params.id]);
+            const { rows } = await pool.query('SELECT * FROM cart WHERE id = $1', [req.params.id]);
 
-            if (check_product.length > 0) {
-                await database.execute('DELETE FROM cart WHERE id = ?', [req.params.id]);
+            if (rows.length > 0) {
+                await pool.query('DELETE FROM cart WHERE id = $1', [req.params.id]);
                 res.status(200).json({ message: 'Producto eliminado del carrito' });
             } else {
                 res.status(404).json({ error: 'No existe el producto en el carrito' });
@@ -50,7 +50,7 @@ const deleteProduct = async (req, res) => {
 
 const deleteContentCart = async (req, res) => {
     try {
-        await database.execute('DELETE FROM cart');
+        await pool.query('DELETE FROM cart');
         res.status(201).json({ success: 'Carrito vaciado exitosamente' });
     } catch (error) {
         console.error('Error al vaciar el carrito:', error.message);

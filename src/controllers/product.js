@@ -1,8 +1,8 @@
-const database = require('../database');
+const pool = require('../database');
 
 const getProducts = async (req, res) => {
     try {
-        const [rows] = await database.execute('SELECT * FROM products');
+        const { rows } = await pool.query('SELECT * FROM products');
 
         if (rows.length > 0) {
             res.status(200).json(rows);
@@ -20,12 +20,12 @@ const getProductById = async (req, res) => {
 
     if (!isNaN(idProducto)) {
         try {
-            const [rows] = await database.execute('SELECT * FROM products WHERE id = ?', [idProducto]);
+            const { rows } = await pool.query('SELECT * FROM products WHERE id = $1', [idProducto]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows);
             } else {
-                res.status(404).json({ error: 'No se encontro producto' });
+                res.status(404).json({ error: 'No se encontró producto' });
             }
         } catch (error) {
             console.error('Error al obtener producto por ID:', error.message);
@@ -41,12 +41,12 @@ const getProductByName = async (req, res) => {
 
     if (typeof nombre === 'string') {
         try {
-            const [rows] = await database.execute('SELECT * FROM products WHERE name = ?', [nombre]);
+            const { rows } = await pool.query('SELECT * FROM products WHERE name = $1', [nombre]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows);
             } else {
-                res.status(404).json({ error: 'No se encontro producto' });
+                res.status(404).json({ error: 'No se encontró producto' });
             }
         } catch (error) {
             console.error('Error al obtener producto por nombre:', error.message);
@@ -62,7 +62,7 @@ const getProductsByCategory = async (req, res) => {
 
     if (!isNaN(categoria)) {
         try {
-            const [rows] = await database.execute('SELECT * FROM products WHERE category_id = ?', [categoria]);
+            const { rows } = await pool.query('SELECT * FROM products WHERE category_id = $1', [categoria]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows);
@@ -82,7 +82,7 @@ const addProductCart = async (req, res) => {
     const { id, name, price, stock, quantity, image_path, rating } = req.body;
 
     try {
-        await database.execute('INSERT INTO cart (id, name, price, stock, quantity, image_path, rating) VALUES (?, ?, ?, ?, ?, ?, ?)', [id, name, price, stock, quantity, image_path, rating]);
+        await pool.query('INSERT INTO cart (id, name, price, stock, quantity, image_path, rating) VALUES ($1, $2, $3, $4, $5, $6, $7)', [id, name, price, stock, quantity, image_path, rating]);
         res.status(200).json({ message: 'Producto añadido al carrito exitosamente' });
     } catch (error) {
         console.error('Error al añadir producto al carrito:', error.message);
@@ -94,10 +94,10 @@ const updateProductStock = async (req, res) => {
     const { id, stock } = req.body;
 
     try {
-        const [check_product] = await database.execute('SELECT * FROM products WHERE id = ?', [id]);
+        const { rows } = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
 
-        if (check_product.length > 0) {
-            await database.execute('UPDATE products SET stock = ? WHERE id = ?', [stock, id]);
+        if (rows.length > 0) {
+            await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [stock, id]);
             res.status(200).json({ message: 'Stock del producto actualizado' });
         } else {
             res.status(404).json({ error: 'No se encontró el producto' });

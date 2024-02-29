@@ -1,8 +1,8 @@
-const database = require('../database');
+const pool = require('../database');
 
 const getCategories = async (req, res) => {
     try {
-        const [rows] = await database.execute('SELECT * FROM categorias');
+        const { rows } = await pool.query('SELECT * FROM categorias');
 
         if (rows.length > 0) {
             res.status(200).json(rows);
@@ -17,7 +17,7 @@ const getCategories = async (req, res) => {
 
 const getCategoriesNames = async (req, res) => {
     try {
-        const [rows] = await database.execute('SELECT nombre FROM categorias');
+        const { rows } = await pool.query('SELECT nombre FROM categorias');
 
         if (rows.length > 0) {
             res.status(200).json(rows);
@@ -35,7 +35,7 @@ const getCategoryById = async (req, res) => {
 
     if (!isNaN(idCategoria)) {
         try {
-            const [rows] = await database.execute('SELECT * FROM categorias WHERE id = ?', [idCategoria]);
+            const { rows } = await pool.query('SELECT * FROM categorias WHERE id = $1', [idCategoria]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows);
@@ -56,7 +56,7 @@ const getCategoryByName = async (req, res) => {
 
     if (typeof name === 'string') {
         try {
-            const [rows] = await database.execute('SELECT * FROM categorias WHERE nombre = ?', [name]);
+            const { rows } = await pool.query('SELECT * FROM categorias WHERE nombre = $1', [name]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows);
