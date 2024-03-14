@@ -23,7 +23,8 @@
     "nodemon": "^2.0.16",
     "pg": "^8.11.3",
     "swagger-jsdoc": "^6.2.1",
-    "swagger-ui-express": "^4.4.0"
+    "swagger-ui-express": "^4.4.0",
+    "web-push": "^3.6.7"
   },
   "devDependencies": {
     "got": "^11.3.0",
