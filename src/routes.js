@@ -1,7 +1,9 @@
 const { Router } = require('express');
 const router = Router();
 const bodyParser = require("body-parser");
+const authenticateToken = require('./middleware/authMiddleware.js');
 
+const user = require('./controllers/user.js');
 const product = require('./controllers/product.js');
 const cart = require('./controllers/cart.js');
 const category = require('./controllers/category.js');
@@ -10,9 +12,16 @@ router.use(bodyParser.json());
 
 router.get('/', (request, response) => {
     response.json({
-        message: 'API | BAHIACOMPUTACION'
+        message: 'API | BAHIASHOP'
     });
 });
+
+//User Routes
+router.get('/users', user.getUsers);
+router.get('/users/:name', user.getUserByName);
+router.post('/users', user.addUser);
+router.put('/users/:id', user.updateUser);
+router.delete('/users/:id', user.deleteUser);
 
 //Products Routes
 router.get('/products', product.getProducts);
@@ -21,7 +30,6 @@ router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
 router.post('/products', product.addProductCart);
 router.put('/products/update', product.updateProductStock);
-
 
 //Cart Routes
 router.get('/cart', cart.getContentCart);
