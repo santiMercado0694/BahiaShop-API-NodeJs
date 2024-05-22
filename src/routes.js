@@ -23,6 +23,11 @@ router.post('/users', user.addUser);
 router.put('/users/:id', user.updateUser);
 router.delete('/users/:id', user.deleteUser);
 
+// Autenticar usuario (Inicio de sesión)
+router.post('/login', user.authenticateUser);
+// Middleware de autenticación para proteger la ruta de autenticación
+router.use('/login', authenticateToken);
+
 //Products Routes
 router.get('/products', product.getProducts);
 router.get('/products/:id', product.getProductById);

@@ -1,3 +1,4 @@
+require('dotenv').config({ path: "../../.env" });
 const pool = require('../database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -111,7 +112,7 @@ const authenticateUser = async (req, res) => {
             const isPasswordValid = await bcrypt.compare(password, user.password);
 
             if (isPasswordValid) {
-                const token = jwt.sign({ id: user.id, email: user.email, rol: user.rol }, 'your_jwt_secret_key', { expiresIn: '1h' });
+                const token = jwt.sign({ id: user.id, email: user.email, rol: user.rol }, process.env.SECRET_KEY, { expiresIn: '1h' });
                 res.status(200).json({ token });
             } else {
                 res.status(401).json({ error: 'Credenciales inválidas' });
