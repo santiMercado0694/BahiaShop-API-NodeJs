@@ -19,6 +19,7 @@ router.get('/', (request, response) => {
 //User Routes
 router.get('/users', user.getUsers);
 router.get('/users/:name', user.getUserByName);
+router.get('/users/email/:email', user.getUserByEmail);
 router.post('/users', user.addUser);
 router.put('/users/:id', user.updateUser);
 router.delete('/users/:id', user.deleteUser);

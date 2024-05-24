@@ -41,6 +41,29 @@ const getUserByName = async (req, res) => {
     }
 };
 
+// Obtener usuario por email
+const getUserByEmail = async (req, res) => {
+    const email = req.params.email;
+
+    if (typeof email === 'string') {
+        try {
+            const { rows } = await pool.query('SELECT id, nombre, apellido, email, rol FROM users WHERE email = $1', [email]);
+
+            if (rows.length > 0) {
+                res.status(200).json(rows[0]); // Retorna solo el primer usuario encontrado
+            } else {
+                res.status(404).json({ error: 'No se encontró el usuario' });
+            }
+        } catch (error) {
+            console.error('Error al obtener usuario por email:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    } else {
+        res.status(400).json({ error: 'Correo electrónico no válido' });
+    }
+};
+
+
 // Añadir un nuevo usuario
 const addUser = async (req, res) => {
     const { nombre, apellido, email, password } = req.body;
@@ -129,6 +152,7 @@ const authenticateUser = async (req, res) => {
 module.exports = {
     getUsers,
     getUserByName,
+    getUserByEmail,
     addUser,
     updateUser,
     deleteUser,
