@@ -21,13 +21,13 @@ router.get('/users', user.getUsers);
 router.get('/users/:name', user.getUserByName);
 router.get('/users/email/:email', user.getUserByEmail);
 router.post('/users', user.addUser);
-router.put('/users/:id', user.updateUser);
-router.delete('/users/:id', user.deleteUser);
+router.put('/users/update', user.updateUser);
+router.delete('/users/delete/:id', user.deleteUser);
 
 // Autenticar usuario (Inicio de sesión)
-router.post('/login', user.authenticateUser);
+router.post('/users/authenticate', user.authenticateUser);
 // Middleware de autenticación para proteger la ruta de autenticación
-router.use('/login', authenticateToken);
+router.use('/users/authenticate', authenticateToken);
 
 //Products Routes
 router.get('/products', product.getProducts);
