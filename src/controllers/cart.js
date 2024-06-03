@@ -18,31 +18,6 @@ const getCartByUserId = async (req, res) => {
     }
 };
 
-// Agregar producto al carrito
-const addProductToCart = async (req, res) => {
-    const userId = req.params.user_id;
-    const { name, price, quantity, image_path } = req.body;
-    try {
-        // Verificar si el usuario tiene un carrito
-        const { rows: cartRows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
-        let cartId;
-        if (cartRows.length === 0) {
-            // Si no tiene, crear un nuevo carrito
-            const { rows: newCartRows } = await pool.query('INSERT INTO carts (user_id) VALUES ($1) RETURNING cart_id', [userId]);
-            cartId = newCartRows[0].cart_id;
-        } else {
-            cartId = cartRows[0].cart_id;
-        }
-
-        // Agregar el producto al carrito
-        await pool.query('INSERT INTO cart_items (cart_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5)', [cartId, name, price, quantity, image_path]);
-        res.status(200).json({ message: 'Producto agregado al carrito correctamente' });
-    } catch (error) {
-        console.error('Error al agregar producto al carrito:', error.message);
-        res.status(500).json({ error: 'Error interno del servidor' });
-    }
-};
-
 // Actualizar cantidad de un producto en el carrito
 const updateCartItemQuantity = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
@@ -87,7 +62,6 @@ const clearCartByUserId = async (req, res) => {
 
 module.exports = {
     getCartByUserId,
-    addProductToCart,
     updateCartItemQuantity,
     removeProductFromCart,
     clearCartByUserId 

@@ -75,11 +75,29 @@ const getProductsByCategory = async (req, res) => {
     }
 };
 
-// Añadir producto al carrito
 const addProductCart = async (req, res) => {
-    const { id, name, price, stock, quantity, image_path } = req.body;
+    const { user_id, product_id, quantity } = req.body;
     try {
-        await pool.query('INSERT INTO cart (id, name, price, stock, quantity, image_path) VALUES ($1, $2, $3, $4, $5, $6)', [id, name, price, stock, quantity, image_path]);
+        // Obtener el cart_id del usuario
+        const cartInfo = await pool.query('SELECT cart_id FROM carts WHERE user_id = $1', [user_id]);
+        
+        if (cartInfo.rows.length === 0) {
+            // Si no hay carrito para este usuario, devolvemos un error
+            return res.status(404).json({ error: 'No se encontró el carrito del usuario' });
+        }
+
+        const cart_id = cartInfo.rows[0].cart_id;
+
+        // Obtener el precio y la imagen del producto para agregar al carrito
+        const productInfo = await pool.query('SELECT name, price, image_path FROM products WHERE id = $1', [product_id]);
+        const { name, price, image_path } = productInfo.rows[0];
+
+        // Agregar el producto al carrito de usuario (cart_items)
+        await pool.query(
+            'INSERT INTO cart_items (cart_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5)',
+            [cart_id, name, price, quantity, image_path]
+        );
+        
         res.status(200).json({ message: 'Producto añadido al carrito exitosamente' });
     } catch (error) {
         console.error('Error al añadir producto al carrito:', error.message);

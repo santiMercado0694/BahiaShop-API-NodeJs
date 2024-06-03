@@ -43,7 +43,6 @@ router.delete('/products/:id', product.deleteProduct);
 
 //Cart Routes
 router.get('/cart/:user_id', cart.getCartByUserId);
-router.post('/cart/:user_id/add', cart.addProductToCart);
 router.put('/cart/:user_id/update/:cart_item_id', cart.updateCartItemQuantity);
 router.delete('/cart/:user_id/remove/:cart_item_id', cart.removeProductFromCart);
 router.delete('/cart/:user_id/clear', cart.clearCartByUserId);
