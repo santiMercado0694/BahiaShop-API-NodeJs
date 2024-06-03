@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 // Obtener todos los usuarios
 const getUsers = async (req, res) => {
     try {
-        const { rows } = await pool.query('SELECT id, nombre, apellido, email, rol FROM users');
+        const { rows } = await pool.query('SELECT user_id, nombre, apellido, email, rol FROM users');
 
         if (rows.length > 0) {
             res.status(200).json(rows);
@@ -25,7 +25,7 @@ const getUserByName = async (req, res) => {
 
     if (typeof nombre === 'string') {
         try {
-            const { rows } = await pool.query('SELECT id, nombre, apellido, email, rol FROM users WHERE nombre = $1', [nombre]);
+            const { rows } = await pool.query('SELECT user_id, nombre, apellido, email, rol FROM users WHERE nombre = $1', [nombre]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows);
@@ -47,7 +47,7 @@ const getUserByEmail = async (req, res) => {
 
     if (typeof email === 'string') {
         try {
-            const { rows } = await pool.query('SELECT id, nombre, apellido, email, rol FROM users WHERE email = $1', [email]);
+            const { rows } = await pool.query('SELECT user_id, nombre, apellido, email, rol FROM users WHERE email = $1', [email]);
 
             if (rows.length > 0) {
                 res.status(200).json(rows[0]); // Retorna solo el primer usuario encontrado
@@ -64,31 +64,52 @@ const getUserByEmail = async (req, res) => {
 };
 
 
-// Añadir un nuevo usuario
 const addUser = async (req, res) => {
     const { nombre, apellido, email, password } = req.body;
-    const rol = 'cliente'; 
+    const rol = 'cliente';
 
     try {
-        const hashedPassword = await bcrypt.hash(password, 10);
-        await pool.query('INSERT INTO users (nombre, apellido, email, password, rol) VALUES ($1, $2, $3, $4, $5)', 
-            [nombre, apellido, email, hashedPassword, rol]);
-        res.status(201).json({ message: 'Usuario añadido exitosamente' });
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+
+            const hashedPassword = await bcrypt.hash(password, 10);
+            const userResult = await client.query(
+                'INSERT INTO users (nombre, apellido, email, password, rol) VALUES ($1, $2, $3, $4, $5) RETURNING user_id',
+                [nombre, apellido, email, hashedPassword, rol]
+            );
+
+            const userId = userResult.rows[0].user_id;
+
+            await client.query(
+                'INSERT INTO carts (user_id) VALUES ($1)',
+                [userId]
+            );
+
+            await client.query('COMMIT');
+            res.status(201).json({ message: 'Usuario y carrito añadidos exitosamente' });
+        } catch (error) {
+            await client.query('ROLLBACK');
+            console.error('Error al añadir usuario y carrito:', error.message);
+            res.status(400).json({ error: 'Error al añadir usuario y carrito' });
+        } finally {
+            client.release();
+        }
     } catch (error) {
-        console.error('Error al añadir usuario:', error.message);
-        res.status(400).json({ error: 'Error al añadir usuario' });
+        console.error('Error al conectar con la base de datos:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
 // Actualizar un usuario
 const updateUser = async (req, res) => {
-    const { id, nombre, apellido, email, rol } = req.body;
+    const { user_id, nombre, apellido, email, rol } = req.body;
 
     try {
-        const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [id]);
+        const { rows } = await pool.query('SELECT * FROM users WHERE user_id = $1', [user_id]);
 
         if (rows.length > 0) {
-            await pool.query('UPDATE users SET nombre = $1, apellido = $2, email = $3, rol = $4 WHERE id = $5', 
+            await pool.query('UPDATE users SET nombre = $1, apellido = $2, email = $3, rol = $4 WHERE user_id = $5', 
                 [nombre, apellido, email, rol, id]);
             res.status(200).json({ message: 'Usuario actualizado exitosamente' });
         } else {
@@ -102,14 +123,28 @@ const updateUser = async (req, res) => {
 
 // Eliminar un usuario
 const deleteUser = async (req, res) => {
-    const idUsuario = req.params.id;
+    const idUsuario = req.params.user_id;
 
     if (!isNaN(idUsuario)) {
         try {
-            const { rows } = await pool.query('SELECT * FROM users WHERE id = $1', [idUsuario]);
+            const { rows } = await pool.query('SELECT * FROM users WHERE user_id = $1', [idUsuario]);
 
             if (rows.length > 0) {
-                await pool.query('DELETE FROM users WHERE id = $1', [idUsuario]);
+                // Obtener el cart_id del usuario
+                const { rows: cartRows } = await pool.query('SELECT cart_id FROM carts WHERE user_id = $1', [idUsuario]);
+
+                if (cartRows.length > 0) {
+                    const cartId = cartRows[0].cart_id;
+
+                    // Eliminar los items del carrito
+                    await pool.query('DELETE FROM cart_items WHERE cart_id = $1', [cartId]);
+
+                    // Eliminar el carrito
+                    await pool.query('DELETE FROM carts WHERE cart_id = $1', [cartId]);
+                }
+
+                // Eliminar el usuario
+                await pool.query('DELETE FROM users WHERE user_id = $1', [idUsuario]);
                 res.status(200).json({ message: 'Usuario eliminado exitosamente' });
             } else {
                 res.status(404).json({ error: 'No se encontró el usuario' });
@@ -135,7 +170,7 @@ const authenticateUser = async (req, res) => {
             const isPasswordValid = await bcrypt.compare(password, user.password);
 
             if (isPasswordValid) {
-                const token = jwt.sign({ id: user.id, email: user.email, rol: user.rol }, process.env.SECRET_KEY, { expiresIn: '1h' });
+                const token = jwt.sign({ user_id: user.user_id, email: user.email, rol: user.rol }, process.env.SECRET_KEY, { expiresIn: '1h' });
                 res.status(200).json({ token });
             } else {
                 res.status(401).json({ error: 'Credenciales inválidas' });

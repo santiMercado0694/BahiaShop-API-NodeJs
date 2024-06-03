@@ -34,19 +34,27 @@ router.get('/products', product.getProducts);
 router.get('/products/:id', product.getProductById);
 router.get('/products/name/:name', product.getProductByName);
 router.get('/products/category/:category_id', product.getProductsByCategory);
-router.post('/products', product.addProductCart);
-router.put('/products/update', product.updateProductStock);
+router.get('/products/:id/stock', product.getProductStock);
+router.post('/products/cart', product.addProductCart);
+router.put('/products/stock', product.updateProductStock);
+router.post('/products', product.createProduct);
+router.put('/products/:id', product.updateProduct);
+router.delete('/products/:id', product.deleteProduct);
 
 //Cart Routes
-router.get('/cart', cart.getContentCart);
-router.put('/cart/update', cart.updateProductQuantity);
-router.delete('/cart/delete', cart.deleteContentCart);
-router.delete('/cart/delete/:id', cart.deleteProduct);
+router.get('/cart/:user_id', cart.getCartByUserId);
+router.post('/cart/:user_id/add', cart.addProductToCart);
+router.put('/cart/:user_id/update/:cart_item_id', cart.updateCartItemQuantity);
+router.delete('/cart/:user_id/remove/:cart_item_id', cart.removeProductFromCart);
+router.delete('/cart/:user_id/clear', cart.clearCartByUserId);
 
 //Category Routes
 router.get('/categories', category.getCategories);
 router.get('/categories/names', category.getCategoriesNames);
 router.get('/categories/:id', category.getCategoryById);
 router.get('/categories/name/:nombre', category.getCategoryByName);
+router.post('/categories', category.createCategory);
+router.put('/categories/:id', category.updateCategory);
+router.delete('/categories/:id', category.deleteCategory);
 
 module.exports = router;

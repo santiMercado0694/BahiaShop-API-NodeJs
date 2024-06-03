@@ -1,66 +1,94 @@
 const pool = require('../database');
 
-const getContentCart = async (req, res) => {
+// Obtener carrito por usuario
+const getCartByUserId = async (req, res) => {
+    const userId = req.params.user_id;
     try {
-        const { rows } = await pool.query('SELECT * FROM cart');
-        res.status(200).json(rows);
+        const { rows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
+        if (rows.length > 0) {
+            const cartId = rows[0].cart_id;
+            const cartItems = await pool.query('SELECT * FROM cart_items WHERE cart_id = $1', [cartId]);
+            res.status(200).json(cartItems.rows);
+        } else {
+            res.status(404).json({ error: 'Carrito no encontrado para este usuario' });
+        }
     } catch (error) {
-        console.error('Error al obtener contenido del carrito:', error.message);
+        console.error('Error al obtener carrito:', error.message);
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
-const updateProductQuantity = async (req, res) => {
-    const { id, quantity } = req.body;
-
+// Agregar producto al carrito
+const addProductToCart = async (req, res) => {
+    const userId = req.params.user_id;
+    const { name, price, quantity, image_path } = req.body;
     try {
-        const { rows } = await pool.query('SELECT * FROM cart WHERE id = $1', [id]);
-
-        if (rows.length > 0) {
-            await pool.query('UPDATE cart SET quantity = $1 WHERE id = $2', [quantity, id]);
-            res.status(200).json({ message: 'Cantidad del producto actualizado' });
+        // Verificar si el usuario tiene un carrito
+        const { rows: cartRows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
+        let cartId;
+        if (cartRows.length === 0) {
+            // Si no tiene, crear un nuevo carrito
+            const { rows: newCartRows } = await pool.query('INSERT INTO carts (user_id) VALUES ($1) RETURNING cart_id', [userId]);
+            cartId = newCartRows[0].cart_id;
         } else {
-            res.status(404).json({ error: 'No se encontró el producto' });
+            cartId = cartRows[0].cart_id;
         }
+
+        // Agregar el producto al carrito
+        await pool.query('INSERT INTO cart_items (cart_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5)', [cartId, name, price, quantity, image_path]);
+        res.status(200).json({ message: 'Producto agregado al carrito correctamente' });
     } catch (error) {
-        console.error('Error al actualizar la cantidad del producto:', error.message);
-        res.status(400).json({ error: 'Error al actualizar la cantidad del producto' });
+        console.error('Error al agregar producto al carrito:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
-const deleteProduct = async (req, res) => {
-    if (!isNaN(req.params.id)) {
-        try {
-            const { rows } = await pool.query('SELECT * FROM cart WHERE id = $1', [req.params.id]);
-
-            if (rows.length > 0) {
-                await pool.query('DELETE FROM cart WHERE id = $1', [req.params.id]);
-                res.status(200).json({ message: 'Producto eliminado del carrito' });
-            } else {
-                res.status(404).json({ error: 'No existe el producto en el carrito' });
-            }
-        } catch (error) {
-            console.error('Error al eliminar el producto del carrito:', error.message);
-            res.status(400).json({ error: 'Algo salió mal' });
-        }
-    } else {
-        res.status(400).json({ error: 'Parámetro inválido' });
-    }
-};
-
-const deleteContentCart = async (req, res) => {
+// Actualizar cantidad de un producto en el carrito
+const updateCartItemQuantity = async (req, res) => {
+    const cartItemId = req.params.cart_item_id;
+    const { quantity } = req.body;
     try {
-        await pool.query('DELETE FROM cart');
-        res.status(201).json({ success: 'Carrito vaciado exitosamente' });
+        await pool.query('UPDATE cart_items SET quantity = $1 WHERE cart_items_id = $2', [quantity, cartItemId]);
+        res.status(200).json({ message: 'Cantidad del producto en el carrito actualizada correctamente' });
     } catch (error) {
-        console.error('Error al vaciar el carrito:', error.message);
-        res.status(404).json({ error: 'Error al querer vaciar el carrito' });
+        console.error('Error al actualizar cantidad de producto en el carrito:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+// Eliminar producto del carrito
+const removeProductFromCart = async (req, res) => {
+    const cartItemId = req.params.cart_item_id;
+    try {
+        await pool.query('DELETE FROM cart_items WHERE cart_items_id = $1', [cartItemId]);
+        res.status(200).json({ message: 'Producto eliminado del carrito correctamente' });
+    } catch (error) {
+        console.error('Error al eliminar producto del carrito:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+const clearCartByUserId = async (req, res) => {
+    const userId = req.params.user_id;
+    try {
+        const { rows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
+        if (rows.length > 0) {
+            const cartId = rows[0].cart_id;
+            await pool.query('DELETE FROM cart_items WHERE cart_id = $1', [cartId]);
+            res.status(200).json({ message: 'Carrito vaciado exitosamente' });
+        } else {
+            res.status(404).json({ error: 'Carrito no encontrado para este usuario' });
+        }
+    } catch (error) {
+        console.error('Error al vaciar carrito:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
 
 module.exports = {
-    getContentCart,
-    updateProductQuantity,
-    deleteProduct,
-    deleteContentCart
+    getCartByUserId,
+    addProductToCart,
+    updateCartItemQuantity,
+    removeProductFromCart,
+    clearCartByUserId 
 };
