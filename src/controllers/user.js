@@ -208,6 +208,7 @@ const authenticateUser = async (req, res) => {
 
 module.exports = {
     getUsers,
+    getUserById,
     getUserByName,
     getUserByEmail,
     addUser,
