@@ -132,7 +132,7 @@ const updateUser = async (req, res) => {
 
         if (rows.length > 0) {
             await pool.query('UPDATE users SET nombre = $1, apellido = $2, email = $3, rol = $4 WHERE user_id = $5', 
-                [nombre, apellido, email, rol, id]);
+                [nombre, apellido, email, rol, user_id]);
             res.status(200).json({ message: 'Usuario actualizado exitosamente' });
         } else {
             res.status(404).json({ error: 'No se encontró el usuario' });
