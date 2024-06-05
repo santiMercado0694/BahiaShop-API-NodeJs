@@ -41,6 +41,28 @@ const getUserByName = async (req, res) => {
     }
 };
 
+// Obtener usuario por id
+const getUserById = async (req, res) => {
+    const id = req.params.id;
+
+    if (!isNaN(id)) {
+        try {
+            const { rows } = await pool.query('SELECT user_id, nombre, apellido, email, rol FROM users WHERE user_id = $1', [id]);
+
+            if (rows.length > 0) {
+                res.status(200).json(rows);
+            } else {
+                res.status(404).json({ error: 'No se encontró el usuario' });
+            }
+        } catch (error) {
+            console.error('Error al obtener usuario por id:', error.message);
+            res.status(500).json({ error: 'Error interno del servidor' });
+        }
+    } else {
+        res.status(400).json({ error: 'Usuario no encontrado con ese id' });
+    }
+};
+
 // Obtener usuario por email
 const getUserByEmail = async (req, res) => {
     const email = req.params.email;
