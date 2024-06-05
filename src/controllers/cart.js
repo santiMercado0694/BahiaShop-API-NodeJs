@@ -23,7 +23,7 @@ const updateCartItemQuantity = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
     const { quantity } = req.body;
     try {
-        await pool.query('UPDATE cart_items SET quantity = $1 WHERE cart_items_id = $2', [quantity, cartItemId]);
+        await pool.query('UPDATE cart_items SET quantity = $1 WHERE cart_item_id = $2', [quantity, cartItemId]);
         res.status(200).json({ message: 'Cantidad del producto en el carrito actualizada correctamente' });
     } catch (error) {
         console.error('Error al actualizar cantidad de producto en el carrito:', error.message);
@@ -35,7 +35,7 @@ const updateCartItemQuantity = async (req, res) => {
 const removeProductFromCart = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
     try {
-        await pool.query('DELETE FROM cart_items WHERE cart_items_id = $1', [cartItemId]);
+        await pool.query('DELETE FROM cart_items WHERE cart_item_id = $1', [cartItemId]);
         res.status(200).json({ message: 'Producto eliminado del carrito correctamente' });
     } catch (error) {
         console.error('Error al eliminar producto del carrito:', error.message);
