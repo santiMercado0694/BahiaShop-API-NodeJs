@@ -193,7 +193,15 @@ const authenticateUser = async (req, res) => {
 
             if (isPasswordValid) {
                 const token = jwt.sign({ user_id: user.user_id, email: user.email, rol: user.rol }, process.env.SECRET_KEY, { expiresIn: '1h' });
-                res.status(200).json({ token });
+                const userData = {
+                    user_id: user.user_id,
+                    name: user.name,
+                    apellido: user.apellido,
+                    email: user.email,
+                    rol: user.rol,
+                    token
+                };
+                res.status(200).json(userData);
             } else {
                 res.status(401).json({ error: 'Credenciales inválidas' });
             }
@@ -205,6 +213,7 @@ const authenticateUser = async (req, res) => {
         res.status(500).json({ error: 'Error interno del servidor' });
     }
 };
+
 
 module.exports = {
     getUsers,
