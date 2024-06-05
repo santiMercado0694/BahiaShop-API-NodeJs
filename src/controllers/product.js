@@ -159,12 +159,12 @@ const createProduct = async (req, res) => {
 // Modificar un producto
 const updateProduct = async (req, res) => {
     const idProducto = req.params.id;
-    const { name, price, stock, category_id, image_path } = req.body;
+    const { name, price, stock, category_id, image_path, details, description } = req.body;
     if (!isNaN(idProducto)) {
         try {
             const { rows } = await pool.query(
-                'UPDATE products SET name = $1, price = $2, stock = $3, category_id = $4, image_path = $5 WHERE id = $6 RETURNING *',
-                [name, price, stock, category_id, image_path, idProducto]
+                'UPDATE products SET name = $1, price = $2, stock = $3, category_id = $4, image_path = $5, details = $6, description = $7 WHERE id = $8 RETURNING *',
+                [name, price, stock, category_id, image_path, details, description, idProducto]
             );
             if (rows.length > 0) {
                 res.status(200).json(rows[0]);
