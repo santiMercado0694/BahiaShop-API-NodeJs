@@ -106,8 +106,8 @@ const addProductCart = async (req, res) => {
 
             // Agregar el producto al carrito de usuario (cart_items)
             await pool.query(
-                'INSERT INTO cart_items (cart_id, product_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5, $6)',
-                [cart_id, product_id, name, price, quantity, image_path]
+                'INSERT INTO cart_items (cart_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5)',
+                [cart_id, name, price, quantity, image_path]
             );
         }
         
