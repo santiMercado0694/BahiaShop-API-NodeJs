@@ -18,6 +18,22 @@ const getCartByUserId = async (req, res) => {
     }
 };
 
+const getCartItemById = async (req, res) => {
+    const cartItemId = req.params.cart_item_id;
+    try {
+        const { rows } = await pool.query('SELECT * FROM cart_items WHERE cart_item_id = $1', [cartItemId]);
+        if (rows.length > 0) {
+            res.status(200).json(rows[0]);
+        } else {
+            res.status(404).json({ error: 'Producto no encontrado en el carrito' });
+        }
+    } catch (error) {
+        console.error('Error al obtener producto del carrito:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
+
 // Actualizar cantidad de un producto en el carrito
 const updateCartItemQuantity = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
@@ -62,6 +78,7 @@ const clearCartByUserId = async (req, res) => {
 
 module.exports = {
     getCartByUserId,
+    getCartItemById,
     updateCartItemQuantity,
     removeProductFromCart,
     clearCartByUserId 
