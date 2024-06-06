@@ -88,15 +88,28 @@ const addProductCart = async (req, res) => {
 
         const cart_id = cartInfo.rows[0].cart_id;
 
-        // Obtener el precio y la imagen del producto para agregar al carrito
-        const productInfo = await pool.query('SELECT name, price, image_path FROM products WHERE id = $1', [product_id]);
-        const { name, price, image_path } = productInfo.rows[0];
+        // Obtener el nombre del producto a partir del product_id
+        const productInfo = await pool.query('SELECT name FROM products WHERE id = $1', [product_id]);
+        const { name } = productInfo.rows[0];
 
-        // Agregar el producto al carrito de usuario (cart_items)
-        await pool.query(
-            'INSERT INTO cart_items (cart_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5)',
-            [cart_id, name, price, quantity, image_path]
-        );
+        // Comprobar si el producto ya existe en cart_items
+        const existingProduct = await pool.query('SELECT * FROM cart_items WHERE cart_id = $1 AND name = $2', [cart_id, name]);
+
+        if (existingProduct.rows.length > 0) {
+            // Si el producto ya existe, actualizar la cantidad
+            const updatedQuantity = existingProduct.rows[0].quantity + quantity;
+            await pool.query('UPDATE cart_items SET quantity = $1 WHERE cart_id = $2 AND name = $3', [updatedQuantity, cart_id, name]);
+        } else {
+            // Obtener el precio y la imagen del producto para agregar al carrito
+            const productDetails = await pool.query('SELECT price, image_path FROM products WHERE id = $1', [product_id]);
+            const { price, image_path } = productDetails.rows[0];
+
+            // Agregar el producto al carrito de usuario (cart_items)
+            await pool.query(
+                'INSERT INTO cart_items (cart_id, product_id, name, price, quantity, image_path) VALUES ($1, $2, $3, $4, $5, $6)',
+                [cart_id, product_id, name, price, quantity, image_path]
+            );
+        }
         
         res.status(200).json({ message: 'Producto añadido al carrito exitosamente' });
     } catch (error) {
@@ -104,6 +117,7 @@ const addProductCart = async (req, res) => {
         res.status(400).json({ error: 'Error al añadir producto al carrito' });
     }
 };
+
 
 const getProductStock = async (req, res) => {
     const idProducto = req.params.id;
