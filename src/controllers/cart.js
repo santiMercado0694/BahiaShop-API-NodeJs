@@ -1,5 +1,20 @@
 const pool = require('../database');
 
+const getCart = async (req, res) => {
+    const userId = req.params.user_id;
+    try {
+        const { rows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
+        if (rows.length > 0) {
+            res.status(200).json(rows[0]);
+        } else {
+            res.status(404).json({ error: 'Carrito no encontrado para este usuario' });
+        }
+    } catch (error) {
+        console.error('Error al obtener carrito:', error.message);
+        res.status(500).json({ error: 'Error interno del servidor' });
+    }
+};
+
 // Obtener carrito por usuario
 const getCartByUserId = async (req, res) => {
     const userId = req.params.user_id;
@@ -77,6 +92,7 @@ const clearCartByUserId = async (req, res) => {
 };
 
 module.exports = {
+    getCart,
     getCartByUserId,
     getCartItemById,
     updateCartItemQuantity,
