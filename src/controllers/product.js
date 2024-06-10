@@ -157,11 +157,11 @@ const updateProductStock = async (req, res) => {
 
 // Crear un nuevo producto
 const createProduct = async (req, res) => {
-    const { name, price, stock, category_id, image_path } = req.body;
+    const { name, details, description, price, stock, category_id, image_path } = req.body;
     try {
         const { rows } = await pool.query(
-            'INSERT INTO products (name, price, stock, category_id, image_path) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-            [name, price, stock, category_id, image_path]
+            'INSERT INTO products (name, details, description, price, stock, category_id, image_path) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *',
+            [name, details, description, price, stock, category_id, image_path]
         );
         res.status(201).json(rows[0]);
     } catch (error) {
@@ -173,12 +173,12 @@ const createProduct = async (req, res) => {
 // Modificar un producto
 const updateProduct = async (req, res) => {
     const idProducto = req.params.id;
-    const { name, price, stock, category_id, image_path, details, description } = req.body;
+    const { name, details, description, price, stock, category_id, image_path  } = req.body;
     if (!isNaN(idProducto)) {
         try {
             const { rows } = await pool.query(
-                'UPDATE products SET name = $1, price = $2, stock = $3, category_id = $4, image_path = $5, details = $6, description = $7 WHERE id = $8 RETURNING *',
-                [name, price, stock, category_id, image_path, details, description, idProducto]
+                'UPDATE products SET name = $1, details = $2, description = $3, price = $4, stock = $5, category_id = $6, image_path = $7 WHERE id = $8 RETURNING *',
+                [name, details, description, price, stock, category_id, image_path, idProducto]
             );
             if (rows.length > 0) {
                 res.status(200).json(rows[0]);
