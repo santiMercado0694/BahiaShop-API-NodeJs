@@ -125,21 +125,20 @@ const addUser = async (req, res) => {
 
 // Actualizar un usuario
 const updateUser = async (req, res) => {
-    const { user_id, nombre, apellido, email, rol } = req.body;
+    const { user_id, rol } = req.body;
 
     try {
         const { rows } = await pool.query('SELECT * FROM users WHERE user_id = $1', [user_id]);
 
         if (rows.length > 0) {
-            await pool.query('UPDATE users SET nombre = $1, apellido = $2, email = $3, rol = $4 WHERE user_id = $5', 
-                [nombre, apellido, email, rol, user_id]);
-            res.status(200).json({ message: 'Usuario actualizado exitosamente' });
+            await pool.query('UPDATE users SET rol = $1 WHERE user_id = $2', [rol, user_id]);
+            res.status(200).json({ message: 'Rol de usuario actualizado exitosamente' });
         } else {
             res.status(404).json({ error: 'No se encontró el usuario' });
         }
     } catch (error) {
-        console.error('Error al actualizar usuario:', error.message);
-        res.status(400).json({ error: 'Error al actualizar usuario' });
+        console.error('Error al actualizar rol de usuario:', error.message);
+        res.status(400).json({ error: 'Error al actualizar rol de usuario' });
     }
 };
 

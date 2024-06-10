@@ -23,7 +23,7 @@ router.get('/users/id/:id', user.getUserById);
 router.get('/users/email/:email', user.getUserByEmail);
 router.post('/users', user.addUser);
 router.put('/users/update', user.updateUser);
-router.delete('/users/delete/:id', user.deleteUser);
+router.delete('/users/delete/:user_id', user.deleteUser);
 
 // Autenticar usuario (Inicio de sesión)
 router.post('/users/authenticate', user.authenticateUser);
