@@ -170,18 +170,38 @@ const createProduct = async (req, res) => {
     }
 };
 
-// Modificar un producto
 const updateProduct = async (req, res) => {
     const idProducto = req.params.id;
-    const { name, details, description, price, stock, category_id, image_path  } = req.body;
+    const { name, details, description, price, stock, category_id, image_path } = req.body;
+
     if (!isNaN(idProducto)) {
         try {
-            const { rows } = await pool.query(
-                'UPDATE products SET name = $1, details = $2, description = $3, price = $4, stock = $5, category_id = $6, image_path = $7 WHERE id = $8 RETURNING *',
-                [name, details, description, price, stock, category_id, image_path, idProducto]
+            // Obtener el nombre original del producto
+            const { rows: originalRows } = await pool.query(
+                'SELECT name FROM products WHERE id = $1',
+                [idProducto]
             );
-            if (rows.length > 0) {
-                res.status(200).json(rows[0]);
+
+            if (originalRows.length > 0) {
+                const originalName = originalRows[0].name;
+
+                // Actualizar los productos en la tabla cart_items
+                await pool.query(
+                    'UPDATE cart_items SET name = $1, price = $2, image_path = $3 WHERE name = $4',
+                    [name, price, image_path, originalName]
+                );
+
+                // Actualizar el producto en la tabla products
+                const { rows: updatedRows } = await pool.query(
+                    'UPDATE products SET name = $1, details = $2, description = $3, price = $4, stock = $5, category_id = $6, image_path = $7 WHERE id = $8 RETURNING *',
+                    [name, details, description, price, stock, category_id, image_path, idProducto]
+                );
+
+                if (updatedRows.length > 0) {
+                    res.status(200).json(updatedRows[0]);
+                } else {
+                    res.status(404).json({ error: 'No se encontró producto' });
+                }
             } else {
                 res.status(404).json({ error: 'No se encontró producto' });
             }
@@ -193,6 +213,7 @@ const updateProduct = async (req, res) => {
         res.status(400).json({ error: 'Producto no encontrado bajo ese ID' });
     }
 };
+
 
 // Eliminar un producto
 const deleteProduct = async (req, res) => {
