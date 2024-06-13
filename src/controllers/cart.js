@@ -22,7 +22,7 @@ const getCartByUserId = async (req, res) => {
         const { rows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
         if (rows.length > 0) {
             const cartId = rows[0].cart_id;
-            const cartItems = await pool.query('SELECT * FROM cart_items WHERE cart_id = $1', [cartId]);
+            const cartItems = await pool.query('SELECT * FROM carts_items WHERE cart_id = $1', [cartId]);
             res.status(200).json(cartItems.rows);
         } else {
             res.status(404).json({ error: 'Carrito no encontrado para este usuario' });
@@ -36,7 +36,7 @@ const getCartByUserId = async (req, res) => {
 const getCartItemById = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
     try {
-        const { rows } = await pool.query('SELECT * FROM cart_items WHERE cart_item_id = $1', [cartItemId]);
+        const { rows } = await pool.query('SELECT * FROM carts_items WHERE cart_item_id = $1', [cartItemId]);
         if (rows.length > 0) {
             res.status(200).json(rows[0]);
         } else {
@@ -54,7 +54,7 @@ const updateCartItemQuantity = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
     const { quantity } = req.body;
     try {
-        await pool.query('UPDATE cart_items SET quantity = $1 WHERE cart_item_id = $2', [quantity, cartItemId]);
+        await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_item_id = $2', [quantity, cartItemId]);
         res.status(200).json({ message: 'Cantidad del producto en el carrito actualizada correctamente' });
     } catch (error) {
         console.error('Error al actualizar cantidad de producto en el carrito:', error.message);
@@ -66,7 +66,7 @@ const updateCartItemQuantity = async (req, res) => {
 const removeProductFromCart = async (req, res) => {
     const cartItemId = req.params.cart_item_id;
     try {
-        await pool.query('DELETE FROM cart_items WHERE cart_item_id = $1', [cartItemId]);
+        await pool.query('DELETE FROM carts_items WHERE cart_item_id = $1', [cartItemId]);
         res.status(200).json({ message: 'Producto eliminado del carrito correctamente' });
     } catch (error) {
         console.error('Error al eliminar producto del carrito:', error.message);
@@ -80,7 +80,7 @@ const clearCartByUserId = async (req, res) => {
         const { rows } = await pool.query('SELECT * FROM carts WHERE user_id = $1', [userId]);
         if (rows.length > 0) {
             const cartId = rows[0].cart_id;
-            await pool.query('DELETE FROM cart_items WHERE cart_id = $1', [cartId]);
+            await pool.query('DELETE FROM carts_items WHERE cart_id = $1', [cartId]);
             res.status(200).json({ message: 'Carrito vaciado exitosamente' });
         } else {
             res.status(404).json({ error: 'Carrito no encontrado para este usuario' });

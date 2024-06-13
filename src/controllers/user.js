@@ -158,7 +158,7 @@ const deleteUser = async (req, res) => {
                     const cartId = cartRows[0].cart_id;
 
                     // Eliminar los items del carrito
-                    await pool.query('DELETE FROM cart_items WHERE cart_id = $1', [cartId]);
+                    await pool.query('DELETE FROM carts_items WHERE cart_id = $1', [cartId]);
 
                     // Eliminar el carrito
                     await pool.query('DELETE FROM carts WHERE cart_id = $1', [cartId]);
