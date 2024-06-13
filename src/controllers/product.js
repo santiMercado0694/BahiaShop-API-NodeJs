@@ -92,7 +92,7 @@ const addProductCart = async (req, res) => {
         const productInfo = await pool.query('SELECT name FROM products WHERE id = $1', [product_id]);
         const { name } = productInfo.rows[0];
 
-        // Comprobar si el producto ya existe en cart_items
+        // Comprobar si el producto ya existe en carts_items
         const existingProduct = await pool.query('SELECT * FROM carts_items WHERE cart_id = $1 AND name = $2', [cart_id, name]);
 
         if (existingProduct.rows.length > 0) {
@@ -104,7 +104,16 @@ const addProductCart = async (req, res) => {
             const productDetails = await pool.query('SELECT price, stock, image_path FROM products WHERE id = $1', [product_id]);
             const { price, stock, image_path } = productDetails.rows[0];
 
-            // Agregar el producto al carrito de usuario (cart_items)
+            // Verificar si hay suficiente stock para agregar al carrito
+            if (stock < quantity) {
+                return res.status(400).json({ error: 'No hay suficiente stock disponible para este producto' });
+            }
+
+            // Actualizar el stock restando la cantidad del producto que se agrega al carrito
+            const updatedStock = stock - quantity;
+            await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [updatedStock, product_id]);
+
+            // Agregar el producto al carrito de usuario (carts_items)
             await pool.query(
                 'INSERT INTO carts_items (cart_id, name, price, stock, quantity, image_path) VALUES ($1, $2, $3, $4, $5, $6)',
                 [cart_id, name, price, stock, quantity, image_path]
@@ -117,6 +126,7 @@ const addProductCart = async (req, res) => {
         res.status(400).json({ error: 'Error al añadir producto al carrito' });
     }
 };
+
 
 
 const getProductStock = async (req, res) => {
