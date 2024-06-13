@@ -72,15 +72,15 @@ const updateCartItemQuantity = async (req, res) => {
         
         // Verificar si hay suficiente stock para actualizar la cantidad
         const newQuantity = parseInt(quantity);
-        if (newQuantity > productStock + oldQuantity) {
+        if (newQuantity > productStock) {
             return res.status(400).json({ error: 'No hay suficiente stock disponible' });
         }
         
         // Actualizar la cantidad en carts_items
-        await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_item_id = $2', [newQuantity, cartItemId]);
+        await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_item_id = $2', [newQuantity + oldQuantity, cartItemId]);
         
         // Calcular la diferencia de stock en la tabla de productos
-        const stockDifference = productStock + oldQuantity - newQuantity;
+        const stockDifference = productStock - newQuantity;
         
         // Actualizar el stock en la tabla de productos
         await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [stockDifference, productId]);
