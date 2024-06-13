@@ -80,10 +80,10 @@ const updateCartItemQuantity = async (req, res) => {
         await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_item_id = $2', [newQuantity, cartItemId]);
         
         // Calcular la diferencia de stock en la tabla de productos
-        const stockDifference = cartStock - newQuantity;
+        const stockDifference = productStock - newQuantity;
         
         // Actualizar el stock en la tabla de productos
-        await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [productStock + stockDifference, productId]);
+        await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [stockDifference, productId]);
 
         // Actualizar el stock de todos los productos con el mismo nombre en carts_items
         await pool.query('UPDATE carts_items SET stock = stock - $1 WHERE name = $2', [stockDifference, name]);
