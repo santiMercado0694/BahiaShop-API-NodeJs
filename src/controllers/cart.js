@@ -60,7 +60,7 @@ const updateCartItemQuantity = async (req, res) => {
             return res.status(404).json({ error: 'No se encontró el producto en el carrito' });
         }
         
-        const { name, cart_id, stock: cartStock } = cartItemInfo.rows[0];
+        const { name, cart_id, stock: cartStock, quantity: oldQuantity } = cartItemInfo.rows[0];
         
         // Obtener el product_id a partir del nombre del producto
         const productInfo = await pool.query('SELECT id, stock FROM products WHERE name = $1', [name]);
@@ -72,7 +72,7 @@ const updateCartItemQuantity = async (req, res) => {
         
         // Verificar si hay suficiente stock para actualizar la cantidad
         const newQuantity = parseInt(quantity);
-        if (newQuantity > productStock) {
+        if (newQuantity > productStock + oldQuantity) {
             return res.status(400).json({ error: 'No hay suficiente stock disponible' });
         }
         
@@ -80,7 +80,7 @@ const updateCartItemQuantity = async (req, res) => {
         await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_item_id = $2', [newQuantity, cartItemId]);
         
         // Calcular la diferencia de stock en la tabla de productos
-        const stockDifference = productStock - newQuantity;
+        const stockDifference = productStock + oldQuantity - newQuantity;
         
         // Actualizar el stock en la tabla de productos
         await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [stockDifference, productId]);
