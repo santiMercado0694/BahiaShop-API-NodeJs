@@ -86,7 +86,7 @@ const updateCartItemQuantity = async (req, res) => {
         await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [stockDifference, productId]);
 
         // Actualizar el stock de todos los productos con el mismo nombre en carts_items
-        await pool.query('UPDATE carts_items SET stock = stock - $1 WHERE name = $2', [stockDifference, name]);
+        await pool.query('UPDATE carts_items SET stock = $1 WHERE name = $2', [stockDifference, name]);
         
         res.status(200).json({ message: 'Cantidad del producto en el carrito actualizada correctamente' });
     } catch (error) {
