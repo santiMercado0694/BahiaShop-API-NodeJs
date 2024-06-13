@@ -97,8 +97,7 @@ const addProductCart = async (req, res) => {
 
         if (existingProduct.rows.length > 0) {
             // Si el producto ya existe, actualizar la cantidad
-            const updatedQuantity = existingProduct.rows[0].quantity + quantity;
-            await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_id = $2 AND name = $3', [updatedQuantity, cart_id, name]);
+            await pool.query('UPDATE carts_items SET quantity = $1 WHERE cart_id = $2 AND name = $3', [quantity, cart_id, name]);
         } else {
             // Obtener el precio, el stock y la imagen del producto para agregar al carrito
             const productDetails = await pool.query('SELECT price, stock, image_path FROM products WHERE id = $1', [product_id]);
