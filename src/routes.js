@@ -7,6 +7,7 @@ const user = require('./controllers/user.js');
 const product = require('./controllers/product.js');
 const cart = require('./controllers/cart.js');
 const category = require('./controllers/category.js');
+const payment = require("./controllers/payment.js");
 
 router.use(bodyParser.json());
 
@@ -58,5 +59,7 @@ router.get('/categories/name/:nombre', category.getCategoryByName);
 router.post('/categories', category.createCategory);
 router.put('/categories/:id', category.updateCategory);
 router.delete('/categories/:id', category.deleteCategory);
+
+router.post('/payment', payment.processPayment)
 
 module.exports = router;
