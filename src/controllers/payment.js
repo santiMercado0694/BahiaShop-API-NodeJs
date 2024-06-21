@@ -5,9 +5,10 @@ const processPayment = async (req, res) => {
 
     (new Preference(mercadopago)).create({
         body: {
-            items: req.body.items
-        },
-        back_urls: req.body.back_urls
+            items: req.body.items,
+            back_urls: req.body.back_urls,
+            auto_return: 'all'
+        }
     })
         .then( result => {
             res.status(200).json(result)
