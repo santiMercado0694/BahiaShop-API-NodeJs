@@ -145,11 +145,11 @@ const getProductStock = async (req, res) => {
 
 // Actualizar stock de un producto
 const updateProductStock = async (req, res) => {
-    const { id, stock } = req.body;
+    const { name, stock } = req.body;
     try {
-        const { rows } = await pool.query('SELECT * FROM products WHERE id = $1', [id]);
+        const { rows } = await pool.query('SELECT * FROM products WHERE name = $1', [name]);
         if (rows.length > 0) {
-            await pool.query('UPDATE products SET stock = $1 WHERE id = $2', [stock, id]);
+            await pool.query('UPDATE products SET stock = $1 WHERE name = $2', [stock, name]);
             res.status(200).json({ message: 'Stock del producto actualizado' });
         } else {
             res.status(404).json({ error: 'No se encontró el producto' });
