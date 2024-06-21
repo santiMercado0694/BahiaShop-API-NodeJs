@@ -88,7 +88,7 @@ const getUserByEmail = async (req, res) => {
 
 const addUser = async (req, res) => {
     const { nombre, apellido, email, password } = req.body;
-    const rol = 'cliente';
+    const rol = 'Cliente';
 
     try {
         const client = await pool.connect();
