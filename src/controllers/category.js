@@ -112,15 +112,34 @@ const updateCategory = async (req, res) => {
 // Eliminar una categoría
 const deleteCategory = async (req, res) => {
     const idCategoria = req.params.id;
+    const idCategoriaSinCategoria = 1;
+
     if (!isNaN(idCategoria)) {
         try {
+            // Inicia una transacción
+            await pool.query('BEGIN');
+
+            // Actualiza los productos a la categoría "Sin categoría"
+            await pool.query(
+                'UPDATE products SET category_id = $1 WHERE category_id = $2',
+                [idCategoriaSinCategoria, idCategoria]
+            );
+
+            // Elimina la categoría
             const { rowCount } = await pool.query('DELETE FROM categorias WHERE id = $1', [idCategoria]);
+
             if (rowCount > 0) {
+                // Confirma la transacción
+                await pool.query('COMMIT');
                 res.status(200).json({ message: 'Categoría eliminada correctamente' });
             } else {
+                // Rechaza la transacción si no se encontró la categoría
+                await pool.query('ROLLBACK');
                 res.status(404).json({ error: 'No se encontró categoría' });
             }
         } catch (error) {
+            // Rechaza la transacción en caso de error
+            await pool.query('ROLLBACK');
             console.error('Error al eliminar categoría:', error.message);
             res.status(500).json({ error: 'Error interno del servidor' });
         }
@@ -128,6 +147,7 @@ const deleteCategory = async (req, res) => {
         res.status(400).json({ error: 'Categoría no encontrada bajo ese ID' });
     }
 };
+
 
 module.exports = {
     getCategories,
